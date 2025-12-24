@@ -1,18 +1,20 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from '@/hooks/use-toast';
-import { Loader2, UtensilsCrossed } from 'lucide-react';
+import { Loader2, UtensilsCrossed, Users } from 'lucide-react';
 
 export default function Auth() {
   const navigate = useNavigate();
   const { user, role, signIn, signUp, loading: authLoading } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const [isSeeding, setIsSeeding] = useState(false);
   
   // Login form state
   const [loginEmail, setLoginEmail] = useState('');
@@ -248,6 +250,47 @@ export default function Auth() {
             <p className="text-xs text-muted-foreground text-center mt-2">
               Click to auto-fill, then press Login
             </p>
+            
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              className="w-full mt-4"
+              disabled={isSeeding}
+              onClick={async () => {
+                setIsSeeding(true);
+                try {
+                  const { data, error } = await supabase.functions.invoke('seed-demo-users');
+                  if (error) throw error;
+                  toast({
+                    title: 'Demo Accounts Created!',
+                    description: 'All 5 demo accounts are now ready to use.',
+                  });
+                  console.log('Seed results:', data);
+                } catch (error) {
+                  console.error('Seeding error:', error);
+                  toast({
+                    title: 'Seeding Failed',
+                    description: error instanceof Error ? error.message : 'Failed to create demo accounts',
+                    variant: 'destructive',
+                  });
+                } finally {
+                  setIsSeeding(false);
+                }
+              }}
+            >
+              {isSeeding ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Creating Demo Accounts...
+                </>
+              ) : (
+                <>
+                  <Users className="mr-2 h-4 w-4" />
+                  Setup Demo Accounts (First Time)
+                </>
+              )}
+            </Button>
           </div>
         </CardContent>
       </Card>
