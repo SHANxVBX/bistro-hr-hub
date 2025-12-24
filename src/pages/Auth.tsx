@@ -220,15 +220,34 @@ export default function Auth() {
 
           <div className="mt-6 pt-6 border-t">
             <p className="text-sm text-muted-foreground text-center mb-3">
-              Demo Accounts
+              Quick Login (Demo)
             </p>
-            <div className="space-y-1 text-xs text-muted-foreground">
-              <p><span className="font-medium">User:</span> user@mallar.com / password123</p>
-              <p><span className="font-medium">Admin:</span> admin@mallar.com / password123</p>
-              <p><span className="font-medium">Finance:</span> finance@mallar.com / password123</p>
-              <p><span className="font-medium">Boss:</span> boss@mallar.com / password123</p>
-              <p><span className="font-medium">Maintainer:</span> maintainer@mallar.com / password123</p>
+            <div className="grid grid-cols-2 gap-2">
+              {[
+                { label: 'User', email: 'user@mallar.com' },
+                { label: 'Admin', email: 'admin@mallar.com' },
+                { label: 'Finance', email: 'finance@mallar.com' },
+                { label: 'Boss', email: 'boss@mallar.com' },
+                { label: 'Maintainer', email: 'maintainer@mallar.com' },
+              ].map((demo) => (
+                <Button
+                  key={demo.email}
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="text-xs"
+                  onClick={() => {
+                    setLoginEmail(demo.email);
+                    setLoginPassword('password123');
+                  }}
+                >
+                  {demo.label}
+                </Button>
+              ))}
             </div>
+            <p className="text-xs text-muted-foreground text-center mt-2">
+              Click to auto-fill, then press Login
+            </p>
           </div>
         </CardContent>
       </Card>
