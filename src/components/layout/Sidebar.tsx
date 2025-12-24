@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 interface NavItem {
   label: string;
@@ -71,39 +72,64 @@ export function Sidebar() {
     await signOut();
   };
 
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map((n) => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
   return (
     <aside
       className={cn(
-        'h-screen bg-sidebar border-r border-sidebar-border flex flex-col transition-all duration-300',
-        collapsed ? 'w-16' : 'w-64'
+        'h-screen glass-sidebar border-r border-border/50 flex flex-col transition-all duration-500 ease-out',
+        collapsed ? 'w-20' : 'w-72'
       )}
     >
       {/* Header */}
-      <div className="p-4 border-b border-sidebar-border flex items-center justify-between">
+      <div className={cn(
+        'p-4 border-b border-border/50 flex items-center transition-all duration-300',
+        collapsed ? 'justify-center' : 'justify-between'
+      )}>
         {!collapsed && (
-          <div className="flex items-center gap-2">
-            <div className="p-2 bg-primary rounded-lg">
-              <UtensilsCrossed className="h-5 w-5 text-primary-foreground" />
+          <div className="flex items-center gap-3 animate-fade-in">
+            <div className="p-2.5 gradient-primary rounded-xl shadow-lg">
+              <UtensilsCrossed className="h-6 w-6 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="font-bold text-sidebar-foreground">Mallar Bistro</h1>
+              <h1 className="font-bold text-foreground tracking-tight">Mallar Bistro</h1>
               <p className="text-xs text-muted-foreground">HR System</p>
             </div>
+          </div>
+        )}
+        {collapsed && (
+          <div className="p-2.5 gradient-primary rounded-xl shadow-lg">
+            <UtensilsCrossed className="h-5 w-5 text-primary-foreground" />
           </div>
         )}
         <Button
           variant="ghost"
           size="icon"
           onClick={() => setCollapsed(!collapsed)}
-          className="text-sidebar-foreground"
+          className={cn(
+            'text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all duration-300',
+            collapsed && 'absolute right-2 top-4'
+          )}
         >
-          {collapsed ? <Menu className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
+          <div className={cn(
+            'transition-transform duration-300',
+            collapsed && 'rotate-180'
+          )}>
+            {collapsed ? <Menu className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
+          </div>
         </Button>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-2 space-y-1 overflow-y-auto">
-        {filteredNavItems.map((item) => {
+      <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
+        {filteredNavItems.map((item, index) => {
           const Icon = item.icon;
           const isActive = location.pathname === item.href;
 
@@ -112,34 +138,60 @@ export function Sidebar() {
               key={item.href}
               to={item.href}
               className={cn(
-                'flex items-center gap-3 px-3 py-2 rounded-lg transition-colors',
+                'group flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-300',
+                'animate-fade-up opacity-0 hover-lift',
                 isActive
-                  ? 'bg-sidebar-accent text-sidebar-accent-foreground font-medium'
-                  : 'text-sidebar-foreground hover:bg-sidebar-accent/50'
+                  ? 'gradient-primary text-primary-foreground shadow-lg'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
               )}
+              style={{ animationDelay: `${index * 50}ms`, animationFillMode: 'forwards' }}
             >
-              <Icon className="h-5 w-5 shrink-0" />
-              {!collapsed && <span>{item.label}</span>}
+              <Icon className={cn(
+                'h-5 w-5 shrink-0 transition-transform duration-300',
+                isActive ? 'scale-110' : 'group-hover:scale-105'
+              )} />
+              {!collapsed && (
+                <span className="font-medium transition-colors duration-300">{item.label}</span>
+              )}
             </Link>
           );
         })}
       </nav>
 
       {/* User section */}
-      <div className="p-4 border-t border-sidebar-border">
-        {!collapsed && profile && (
-          <div className="mb-3">
-            <p className="font-medium text-sidebar-foreground text-sm truncate">
-              {profile.full_name}
-            </p>
-            <p className="text-xs text-muted-foreground capitalize">{role}</p>
+      <div className="p-4 border-t border-border/50">
+        {profile && (
+          <div className={cn(
+            'flex items-center gap-3 mb-3 p-2 rounded-xl bg-muted/30 transition-all duration-300',
+            collapsed && 'justify-center p-2'
+          )}>
+            <Avatar className={cn(
+              'ring-2 ring-primary/20 transition-all duration-300',
+              collapsed ? 'h-8 w-8' : 'h-10 w-10'
+            )}>
+              <AvatarImage src={profile.avatar_url || undefined} alt={profile.full_name} />
+              <AvatarFallback className="gradient-primary text-primary-foreground text-sm font-semibold">
+                {getInitials(profile.full_name)}
+              </AvatarFallback>
+            </Avatar>
+            {!collapsed && (
+              <div className="min-w-0 flex-1 animate-fade-in">
+                <p className="font-medium text-foreground text-sm truncate">
+                  {profile.full_name}
+                </p>
+                <p className="text-xs text-muted-foreground capitalize">{role}</p>
+              </div>
+            )}
           </div>
         )}
         <Button
           variant="ghost"
           size={collapsed ? 'icon' : 'default'}
           onClick={handleSignOut}
-          className={cn('text-sidebar-foreground w-full', !collapsed && 'justify-start')}
+          className={cn(
+            'w-full text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all duration-300',
+            !collapsed && 'justify-start'
+          )}
         >
           <LogOut className="h-5 w-5" />
           {!collapsed && <span className="ml-2">Sign Out</span>}

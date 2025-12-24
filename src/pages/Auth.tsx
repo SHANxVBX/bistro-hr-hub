@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from '@/hooks/use-toast';
-import { Loader2, UtensilsCrossed, Users } from 'lucide-react';
+import { Loader2, UtensilsCrossed, Users, Sparkles } from 'lucide-react';
 
 export default function Auth() {
   const navigate = useNavigate();
@@ -109,34 +109,65 @@ export default function Auth() {
   if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <div className="text-center animate-fade-up">
+          <div className="relative">
+            <div className="absolute inset-0 gradient-primary blur-2xl opacity-30 rounded-full" />
+            <Loader2 className="h-12 w-12 animate-spin text-primary relative" />
+          </div>
+          <p className="mt-4 text-muted-foreground">Loading...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-muted/30 p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <div className="flex justify-center mb-4">
-            <div className="p-3 bg-primary rounded-xl">
-              <UtensilsCrossed className="h-8 w-8 text-primary-foreground" />
+    <div className="min-h-screen flex items-center justify-center bg-background p-4 relative overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary/10 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-primary/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-primary/5 to-transparent rounded-full blur-3xl" />
+      </div>
+
+      <Card className="w-full max-w-md glass-card animate-scale-in relative">
+        <CardHeader className="text-center pb-2">
+          <div className="flex justify-center mb-6 animate-fade-up" style={{ animationDelay: '0.1s' }}>
+            <div className="relative">
+              <div className="absolute inset-0 gradient-primary blur-xl opacity-50 rounded-2xl" />
+              <div className="p-4 gradient-primary rounded-2xl shadow-2xl relative">
+                <UtensilsCrossed className="h-10 w-10 text-primary-foreground" />
+              </div>
+              <Sparkles className="absolute -top-2 -right-2 h-5 w-5 text-primary animate-pulse" />
             </div>
           </div>
-          <CardTitle className="text-2xl font-bold">Mallar Bistro</CardTitle>
-          <CardDescription>HR Management System</CardDescription>
+          <CardTitle className="text-3xl font-bold gradient-text animate-fade-up" style={{ animationDelay: '0.2s' }}>
+            Mallar Bistro
+          </CardTitle>
+          <CardDescription className="animate-fade-up" style={{ animationDelay: '0.3s' }}>
+            HR Management System
+          </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="animate-fade-up" style={{ animationDelay: '0.4s' }}>
           <Tabs defaultValue="login" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="login">Login</TabsTrigger>
-              <TabsTrigger value="signup">Sign Up</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-2 mb-6 p-1 bg-muted/50">
+              <TabsTrigger 
+                value="login" 
+                className="data-[state=active]:gradient-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg transition-all duration-300"
+              >
+                Login
+              </TabsTrigger>
+              <TabsTrigger 
+                value="signup"
+                className="data-[state=active]:gradient-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg transition-all duration-300"
+              >
+                Sign Up
+              </TabsTrigger>
             </TabsList>
             
-            <TabsContent value="login">
+            <TabsContent value="login" className="space-y-4">
               <form onSubmit={handleLogin} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="login-email">Email</Label>
+                  <Label htmlFor="login-email" className="text-sm font-medium">Email</Label>
                   <Input
                     id="login-email"
                     type="email"
@@ -144,10 +175,11 @@ export default function Auth() {
                     value={loginEmail}
                     onChange={(e) => setLoginEmail(e.target.value)}
                     required
+                    className="h-12 rounded-xl border-border/50 bg-background/50 focus:border-primary focus:ring-primary/20 transition-all duration-300"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="login-password">Password</Label>
+                  <Label htmlFor="login-password" className="text-sm font-medium">Password</Label>
                   <Input
                     id="login-password"
                     type="password"
@@ -155,9 +187,14 @@ export default function Auth() {
                     value={loginPassword}
                     onChange={(e) => setLoginPassword(e.target.value)}
                     required
+                    className="h-12 rounded-xl border-border/50 bg-background/50 focus:border-primary focus:ring-primary/20 transition-all duration-300"
                   />
                 </div>
-                <Button type="submit" className="w-full" disabled={isLoading}>
+                <Button 
+                  type="submit" 
+                  className="w-full h-12 gradient-primary rounded-xl shadow-lg hover-lift font-semibold text-primary-foreground" 
+                  disabled={isLoading}
+                >
                   {isLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -170,10 +207,10 @@ export default function Auth() {
               </form>
             </TabsContent>
             
-            <TabsContent value="signup">
+            <TabsContent value="signup" className="space-y-4">
               <form onSubmit={handleSignup} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="signup-name">Full Name</Label>
+                  <Label htmlFor="signup-name" className="text-sm font-medium">Full Name</Label>
                   <Input
                     id="signup-name"
                     type="text"
@@ -181,10 +218,11 @@ export default function Auth() {
                     value={signupName}
                     onChange={(e) => setSignupName(e.target.value)}
                     required
+                    className="h-12 rounded-xl border-border/50 bg-background/50 focus:border-primary focus:ring-primary/20 transition-all duration-300"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="signup-email">Email</Label>
+                  <Label htmlFor="signup-email" className="text-sm font-medium">Email</Label>
                   <Input
                     id="signup-email"
                     type="email"
@@ -192,10 +230,11 @@ export default function Auth() {
                     value={signupEmail}
                     onChange={(e) => setSignupEmail(e.target.value)}
                     required
+                    className="h-12 rounded-xl border-border/50 bg-background/50 focus:border-primary focus:ring-primary/20 transition-all duration-300"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="signup-password">Password</Label>
+                  <Label htmlFor="signup-password" className="text-sm font-medium">Password</Label>
                   <Input
                     id="signup-password"
                     type="password"
@@ -204,9 +243,14 @@ export default function Auth() {
                     onChange={(e) => setSignupPassword(e.target.value)}
                     required
                     minLength={6}
+                    className="h-12 rounded-xl border-border/50 bg-background/50 focus:border-primary focus:ring-primary/20 transition-all duration-300"
                   />
                 </div>
-                <Button type="submit" className="w-full" disabled={isLoading}>
+                <Button 
+                  type="submit" 
+                  className="w-full h-12 gradient-primary rounded-xl shadow-lg hover-lift font-semibold text-primary-foreground" 
+                  disabled={isLoading}
+                >
                   {isLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -220,24 +264,25 @@ export default function Auth() {
             </TabsContent>
           </Tabs>
 
-          <div className="mt-6 pt-6 border-t">
-            <p className="text-sm text-muted-foreground text-center mb-3">
+          <div className="mt-8 pt-6 border-t border-border/50">
+            <p className="text-sm text-muted-foreground text-center mb-4 font-medium">
               Quick Login (Demo)
             </p>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
               {[
-                { label: 'User', email: 'user@mallar.com' },
-                { label: 'Admin', email: 'admin@mallar.com' },
-                { label: 'Finance', email: 'finance@mallar.com' },
-                { label: 'Boss', email: 'boss@mallar.com' },
-                { label: 'Maintainer', email: 'maintainer@mallar.com' },
-              ].map((demo) => (
+                { label: 'User', email: 'user@mallar.com', color: 'from-blue-500 to-blue-600' },
+                { label: 'Admin', email: 'admin@mallar.com', color: 'from-purple-500 to-purple-600' },
+                { label: 'Finance', email: 'finance@mallar.com', color: 'from-green-500 to-green-600' },
+                { label: 'Boss', email: 'boss@mallar.com', color: 'from-amber-500 to-amber-600' },
+                { label: 'Maint', email: 'maintainer@mallar.com', color: 'from-red-500 to-red-600' },
+              ].map((demo, index) => (
                 <Button
                   key={demo.email}
                   type="button"
                   variant="outline"
                   size="sm"
-                  className="text-xs"
+                  className="text-xs rounded-xl border-border/50 hover:border-primary/50 hover:bg-primary/5 transition-all duration-300 animate-fade-up opacity-0"
+                  style={{ animationDelay: `${0.5 + index * 0.05}s`, animationFillMode: 'forwards' }}
                   onClick={() => {
                     setLoginEmail(demo.email);
                     setLoginPassword('password123');
@@ -247,7 +292,7 @@ export default function Auth() {
                 </Button>
               ))}
             </div>
-            <p className="text-xs text-muted-foreground text-center mt-2">
+            <p className="text-xs text-muted-foreground text-center mt-3">
               Click to auto-fill, then press Login
             </p>
             
@@ -255,7 +300,7 @@ export default function Auth() {
               type="button"
               variant="secondary"
               size="sm"
-              className="w-full mt-4"
+              className="w-full mt-4 rounded-xl h-11 bg-muted/50 hover:bg-muted transition-all duration-300"
               disabled={isSeeding}
               onClick={async () => {
                 setIsSeeding(true);
