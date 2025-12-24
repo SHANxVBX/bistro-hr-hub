@@ -1,0 +1,37 @@
+@import './tailwind.css';
+@import './theme.css';
+
+@media print {
+    @page {
+        size: landscape;
+        margin: 1cm;
+    }
+
+    body {
+        background: white;
+    }
+
+    /* Hide UI elements */
+    header,
+    button,
+    .no-print,
+    [role="tablist"] {
+        display: none !important;
+    }
+
+    /* Ensure content is visible and layout is correct */
+    main,
+    .card,
+    .tab-content {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        box-shadow: none !important;
+        border: none !important;
+    }
+
+    /* Specific override for the breakdown card */
+    .leave-breakdown-card {
+        display: block !important;
+    }
+}
